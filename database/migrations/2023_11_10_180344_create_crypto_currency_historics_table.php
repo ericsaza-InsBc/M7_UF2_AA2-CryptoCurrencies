@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('crypto_currency_historics', function (Blueprint $table) {
             $table->id();
+            $table->string('crypto_currency_id');
+            $table->timestamp('date');
+            $table->decimal('price');
+            $table->decimal('market_cap');
+            $table->integer('volume');
             $table->timestamps();
         });
     }

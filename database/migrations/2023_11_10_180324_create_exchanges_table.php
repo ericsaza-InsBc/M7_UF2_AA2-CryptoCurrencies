@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('exchanges', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('url');
+            $table->decimal('fee');
+            $table->string('country');
+            $table->string('description');
+            $table->string('logo_url');
             $table->timestamps();
         });
     }
