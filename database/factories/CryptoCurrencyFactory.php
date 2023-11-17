@@ -1,23 +1,54 @@
 <?php
 
-namespace Database\Factories;
+namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CryptoCurrency>
- */
-class CryptoCurrencyFactory extends Factory
+class Cryptocurrency extends Model
 {
+    use HasFactory;
+
     /**
-     * Define the model's default state.
+     * The table associated with the model.
      *
-     * @return array<string, mixed>
+     * @var string
      */
-    public function definition(): array
-    {
-        return [
-            //
-        ];
-    }
+    protected $table = 'cryptocurrencies';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'symbol',
+        'current_price',
+        'market_cap',
+        'supply',
+        'description',
+        'logo_url',
+        'website_link'
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'date_added' => 'datetime',
+        'date_launched' => 'datetime',
+        'urls' => 'array',
+        'tags' => 'array',
+        'infinite_supply' => 'boolean',
+    ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [];
 }
