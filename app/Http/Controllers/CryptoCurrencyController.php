@@ -2,65 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CryptoCurrency;
-use App\Http\Requests\StoreCryptoCurrencyRequest;
-use App\Http\Requests\UpdateCryptoCurrencyRequest;
+use App\Models\Cryptocurrency;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
-class CryptoCurrencyController extends Controller
+class CryptocurrencyController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Update the 'urls' field for all cryptocurrencies from the CoinMarketCap API.
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function updateUrlsFromAPI()
     {
-        //
-    }
+        // Endpoint de CoinMarketCap
+        $endpoint = "https://pro-api.coinmarketcap.com/cryptocurrency/listings/latest";  // Reemplazar con la URL correcta de la API
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        // Obtener los datos de la API
+        $response = Http::get($endpoint);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCryptoCurrencyRequest $request)
-    {
-        //
-    }
+        // Verificar si la solicitud fue exitosa
+        if ($response->successful()) {
+            $cryptocurrenciesData = $response->json()['data'];
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(CryptoCurrency $cryptoCurrency)
-    {
-        //
-    }
+            foreach ($cryptocurrenciesData as $cryptoData) {
+                // Buscar criptomoneda por 'external_id'
+                $cryptocurrency = Cryptocurrency::where('external_id', $cryptoData['id'])->first();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CryptoCurrency $cryptoCurrency)
-    {
-        //
-    }
+                // Si se encuentra la criptomoneda, actualizar el campo 'urls'
+                if ($cryptocurrency) {
+                    $cryptocurrency->update([
+                        'urls' => $cryptoData['urls'],
+                    ]);
+                }
+            }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCryptoCurrencyRequest $request, CryptoCurrency $cryptoCurrency)
-    {
-        //
-    }
+            return response()->json(['message' => 'URLs updated successfully!']);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(CryptoCurrency $cryptoCurrency)
-    {
-        //
+        return response()->json(['error' => 'Failed to fetch data from API'], 500);
     }
 }
